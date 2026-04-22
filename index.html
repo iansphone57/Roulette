@@ -11,17 +11,24 @@
 
     <!-- Spin History Panel -->
     <div id="spin-history-panel">
-        <h2>Spin History</h2>
+        <h2>Spin Entry</h2>
         <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
         <button onclick="addSpin()">Add Spin</button>
+        <button onclick="undoSpin()" id="undoBtn">Undo</button>
 
         <div id="historyList"></div>
     </div>
 
-    <!-- Sector Stats -->
-    <div id="sector-stats-panel">
-        <h2>Sector Stats</h2>
-        <div id="sectorOutput"></div>
+    <!-- Sector Heatmap -->
+    <div id="sector-heatmap-panel">
+        <h2>Sector Heatmap</h2>
+        <div id="heatmapOutput"></div>
+    </div>
+
+    <!-- Prediction Engine -->
+    <div id="prediction-panel">
+        <h2>Predictions</h2>
+        <div id="predictionOutput"></div>
     </div>
 
     <!-- Bias Stats -->
