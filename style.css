@@ -1,33 +1,17 @@
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 20px;
-  background: #f2f2f2;
+    background: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
 }
 
-.screen {
-  display: block;
+h1, h2 {
+    color: #0f0;
 }
 
-.hidden {
-  display: none;
-}
-
-button {
-  width: 80%;
-  padding: 15px;
-  margin: 10px 0;
-  font-size: 18px;
-}
-
-input {
-  width: 80%;
-  padding: 12px;
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-#spin-history-panel {
+#spin-history-panel,
+#sector-stats-panel,
+#bias-stats-panel {
     margin-top: 20px;
     padding: 15px;
     background: #111;
@@ -40,4 +24,15 @@ input {
     font-size: 1.2em;
     color: #0f0;
     white-space: pre-line;
+}
+
+input {
+    padding: 5px;
+    font-size: 1em;
+}
+
+button {
+    padding: 6px 12px;
+    margin-left: 5px;
+    cursor: pointer;
 }
