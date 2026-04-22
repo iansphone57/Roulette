@@ -55,3 +55,23 @@ function runAnalysis() {
 
   document.getElementById('analysisText').innerText = result;
 }
+
+let spins = [];
+
+function addSpin() {
+    const input = document.getElementById("spinInput");
+    const num = parseInt(input.value);
+
+    if (isNaN(num) || num < 0 || num > 36) return;
+
+    spins.push(num);
+    input.value = "";
+    updateHistory();
+    updateSectorStats();
+    updateBiasStats();
+}
+
+function updateHistory() {
+    const list = document.getElementById("historyList");
+    list.textContent = spins.join(", ");
+}
