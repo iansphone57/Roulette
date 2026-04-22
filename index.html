@@ -1,42 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roulette Tool</title>
-  <link rel="stylesheet" href="style.css">
+    <title>Roulette Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div id="menu" class="screen">
-  <h1>Roulette Tool</h1>
-  <button onclick="showScreen('stats')">1. Take Stats</button>
-  <button onclick="showScreen('analysis')">2. Analyse & Bet</button>
-</div>
+    <h1>Roulette Tracker</h1>
 
-<div id="stats" class="screen hidden">
-  <h2>Enter Spin</h2>
-  <input id="spinInput" type="number" min="0" max="36" placeholder="0–36">
-  <button onclick="addSpin()">Add</button>
-  <p id="spinCount">Collected: 0</p>
-  <button onclick="showScreen('menu')">Back</button>
-</div>
+    <!-- Spin History Panel -->
+    <div id="spin-history-panel">
+        <h2>Spin History</h2>
+        <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
+        <button onclick="addSpin()">Add Spin</button>
 
-<div id="analysis" class="screen hidden">
-  <h2>Analysis</h2>
-  <p id="analysisText">No data yet.</p>
-  <button onclick="showScreen('menu')">Back</button>
-</div>
+        <div id="historyList"></div>
+    </div>
 
-<script src="script.js"></script>
+    <!-- Sector Stats -->
+    <div id="sector-stats-panel">
+        <h2>Sector Stats</h2>
+        <div id="sectorOutput"></div>
+    </div>
 
-  <div id="spin-history-panel">
-    <h2>Spin History</h2>
-    <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
-    <button onclick="addSpin()">Add Spin</button>
+    <!-- Bias Stats -->
+    <div id="bias-stats-panel">
+        <h2>Bias Detection</h2>
+        <div id="biasOutput"></div>
+    </div>
 
-    <div id="historyList"></div>
-</div>
-
-
+    <script src="script.js"></script>
 </body>
 </html>
