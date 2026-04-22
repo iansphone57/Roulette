@@ -39,8 +39,12 @@ function undoSpin() {
 // Update spin history
 function updateHistory() {
     const list = document.getElementById("historyList");
-    list.textContent = spins.join(", ");
+
+    // Force a full redraw so mobile browsers update correctly
+    list.innerHTML = "";  
+    list.innerHTML = spins.join(", ");
 }
+
 
 // Sector Heatmap
 function updateHeatmap() {
