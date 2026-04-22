@@ -13,7 +13,9 @@ h1, h2 {
 #spin-history-panel,
 #sector-heatmap-panel,
 #prediction-panel,
-#bias-stats-panel {
+#bias-stats-panel,
+#trend-panel,
+#coverage-panel {
     margin-top: 20px;
     padding: 15px;
     background: #111;
@@ -21,11 +23,21 @@ h1, h2 {
     border-radius: 8px;
 }
 
+/* One-line, scrollable history */
 #historyList {
     margin-top: 10px;
     font-size: 1em;
     color: #0f0;
-    white-space: pre-line;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Sample strength text */
+#sampleStrength {
+    margin-top: 10px;
+    font-size: 0.8em;
+    color: #ccc;
 }
 
 input {
@@ -33,7 +45,7 @@ input {
     font-size: 150%;
 }
 
-/* Smaller Add + Undo buttons */
+/* Button row */
 #buttonRow {
     display: flex;
     gap: 20px;
@@ -42,7 +54,7 @@ input {
 
 #buttonRow button {
     padding: 15px 30px;   /* smaller buttons */
-    font-size: 120%;      /* slightly smaller text */
+    font-size: 120%;
     cursor: pointer;
 }
 
