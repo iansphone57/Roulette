@@ -75,3 +75,19 @@ function updateHistory() {
     const list = document.getElementById("historyList");
     list.textContent = spins.join(", ");
 }
+
+const voisins = [22,18,29,7,28,12,35,3,26,0,32,15,19,4,21,2,25];
+const tiers   = [27,13,36,11,30,8,23,10,5,24,16,33];
+const orphelins = [1,20,14,31,9,17,34,6];
+
+function updateSectorStats() {
+    let v = 0, t = 0, o = 0;
+
+    for (let n of spins) {
+        if (voisins.includes(n)) v++;
+        else if (tiers.includes(n)) t++;
+        else if (orphelins.includes(n)) o++;
+    }
+
+    console.log("Sector Stats → Voisins:", v, "Tiers:", t, "Orphelins:", o);
+}
