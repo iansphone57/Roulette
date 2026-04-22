@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Roulette V1.01</title>
+    <title>Roulette V1.02</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -9,14 +9,18 @@
 
     <h1>Roulette V1.02</h1>
 
-    <!-- Spin History Panel -->
+    <!-- Spin Entry Panel -->
     <div id="spin-history-panel">
         <h2>Spin Entry</h2>
-       <div id="buttonRow">
-    <button onclick="addSpin()">Add Spin</button>
-    <button onclick="undoSpin()" id="undoBtn">Undo</button>
-</div>
 
+        <!-- Number entry box (restored) -->
+        <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
+
+        <!-- Add Spin + Undo side-by-side -->
+        <div id="buttonRow">
+            <button onclick="addSpin()">Add Spin</button>
+            <button onclick="undoSpin()" id="undoBtn">Undo</button>
+        </div>
 
         <div id="historyList"></div>
     </div>
