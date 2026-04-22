@@ -10,10 +10,15 @@ function addSpin() {
     const input = document.getElementById("spinInput");
     const num = parseInt(input.value);
 
-    if (isNaN(num) || num < 0 || num > 36) return;
+    if (isNaN(num) || num < 0 || num > 36) {
+        input.value = "";
+        input.focus();
+        return;
+    }
 
     spins.push(num);
     input.value = "";
+    input.focus();   // ← keeps cursor in the box
 
     updateHistory();
     updateSectorStats();
