@@ -91,3 +91,35 @@ function updateSectorStats() {
 
     console.log("Sector Stats → Voisins:", v, "Tiers:", t, "Orphelins:", o);
 }
+
+function updateBiasStats() {
+    if (spins.length < 20) return; // need minimum data
+
+    const expected = spins.length / 37;
+    let counts = Array(37).fill(0);
+
+    for (let n of spins) counts[n]++;
+
+    let hot = [];
+    let cold = [];
+
+    for (let i = 0; i < 37; i++) {
+        if (counts[i] > expected * 1.8) hot.push(i);
+        if (counts[i] < expected * 0.4) cold.push(i);
+    }
+
+    console.log("Hot numbers:", hot);
+    console.log("Cold numbers:", cold);
+
+    // Chi-square bias test
+    let chi = 0;
+    for (let i = 0; i < 37; i++) {
+        chi += Math.pow(counts[i] - expected, 2) / expected;
+    }
+
+    console.log("Bias Score (Chi²):", chi.toFixed(2));
+}
+
+
+
+
