@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Roulette V1.02</title>
+    <title>Roulette V1.03</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h1>Roulette V1.02</h1>
+    <h1>Roulette V1.03</h1>
 
     <!-- Spin Entry Panel -->
     <div id="spin-history-panel">
         <h2>Spin Entry</h2>
 
-        <!-- Number entry box (restored) -->
         <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
 
-        <!-- Add Spin + Undo side-by-side -->
         <div id="buttonRow">
             <button onclick="addSpin()">Add Spin</button>
             <button onclick="undoSpin()" id="undoBtn">Undo</button>
         </div>
 
+        <!-- One-line, scrollable history (last ~15 spins) -->
         <div id="historyList"></div>
+
+        <!-- Sample strength indicator -->
+        <div id="sampleStrength"></div>
     </div>
 
     <!-- Sector Heatmap -->
@@ -41,6 +43,17 @@
     <div id="bias-stats-panel">
         <h2>Bias Detection</h2>
         <div id="biasOutput"></div>
+    </div>
+
+    <!-- Trend + Coverage (movie realism) -->
+    <div id="trend-panel">
+        <h2>Trend Detected</h2>
+        <div id="trendOutput"></div>
+    </div>
+
+    <div id="coverage-panel">
+        <h2>Coverage Map</h2>
+        <div id="coverageOutput"></div>
     </div>
 
     <script src="script.js"></script>
