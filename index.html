@@ -12,9 +12,11 @@
     <!-- Spin History Panel -->
     <div id="spin-history-panel">
         <h2>Spin Entry</h2>
-        <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
-        <button onclick="addSpin()">Add Spin</button>
-        <button onclick="undoSpin()" id="undoBtn">Undo</button>
+       <div id="buttonRow">
+    <button onclick="addSpin()">Add Spin</button>
+    <button onclick="undoSpin()" id="undoBtn">Undo</button>
+</div>
+
 
         <div id="historyList"></div>
     </div>
