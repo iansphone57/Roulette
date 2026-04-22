@@ -20,31 +20,50 @@ function addSpin() {
     input.value = "";
     input.focus();
 
-    updateHistory();
-    updateHeatmap();
-    updateBiasStats();
-    updatePredictions();
+    updateAll();
 }
 
 // Undo last spin
 function undoSpin() {
+    if (spins.length === 0) return;
+
     spins.pop();
-    updateHistory();
-    updateHeatmap();
-    updateBiasStats();
-    updatePredictions();
+    updateAll();
     document.getElementById("spinInput").focus();
 }
 
-// Update spin history
-function updateHistory() {
-    const list = document.getElementById("historyList");
-
-    // Force a full redraw so mobile browsers update correctly
-    list.innerHTML = "";  
-    list.innerHTML = spins.join(", ");
+// Central updater
+function updateAll() {
+    updateHistory();
+    updateSampleStrength();
+    updateHeatmap();
+    updateBiasStats();
+    updatePredictions();
+    updateTrendsAndCoverage();
 }
 
+// One-line, scrollable history (last ~15 spins)
+function updateHistory() {
+    const list = document.getElementById("historyList");
+    const lastSpins = spins.slice(-15);
+    list.innerHTML = lastSpins.join(", ");
+}
+
+// Sample strength indicator
+function updateSampleStrength() {
+    const el = document.getElementById("sampleStrength");
+    const n = spins.length;
+
+    let msg = `Spins: ${n} — `;
+
+    if (n < 30) msg += "Very early / noisy";
+    else if (n < 100) msg += "Early data, trends unstable";
+    else if (n < 300) msg += "Sector trends forming";
+    else if (n < 800) msg += "Sector bias moderately reliable";
+    else msg += "Strong dataset for sector and number analysis";
+
+    el.textContent = msg;
+}
 
 // Sector Heatmap
 function updateHeatmap() {
@@ -70,11 +89,12 @@ function updateHeatmap() {
          <span class="${colour(o)}">Orphelins: ${o}</span>`;
 }
 
-// Bias detection
+// Bias detection (number-level)
 function updateBiasStats() {
+    const out = document.getElementById("biasOutput");
+
     if (spins.length < 20) {
-        document.getElementById("biasOutput").innerHTML =
-            "Need at least 20 spins for bias detection.";
+        out.innerHTML = "Need at least 20 spins for bias detection.";
         return;
     }
 
@@ -96,7 +116,7 @@ function updateBiasStats() {
         chi += Math.pow(counts[i] - expected, 2) / expected;
     }
 
-    document.getElementById("biasOutput").innerHTML =
+    out.innerHTML =
         `Hot: ${hot.join(", ") || "None"}<br>
          Cold: ${cold.join(", ") || "None"}<br>
          Bias Score (Chi²): ${chi.toFixed(2)}`;
@@ -104,16 +124,16 @@ function updateBiasStats() {
 
 // Prediction Engine
 function updatePredictions() {
+    const out = document.getElementById("predictionOutput");
+
     if (spins.length < 10) {
-        document.getElementById("predictionOutput").innerHTML =
-            "Need at least 10 spins for predictions.";
+        out.innerHTML = "Need at least 10 spins for predictions.";
         return;
     }
 
     let counts = Array(37).fill(0);
     for (let n of spins) counts[n]++;
 
-    // Weighted score = frequency + sector bonus
     let scores = Array(37).fill(0);
 
     for (let i = 0; i < 37; i++) {
@@ -129,9 +149,95 @@ function updatePredictions() {
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
 
-    document.getElementById("predictionOutput").innerHTML =
+    out.innerHTML =
         `Top Predictions:<br>
          1) ${ranked[0].num}<br>
          2) ${ranked[1].num}<br>
          3) ${ranked[2].num}`;
+}
+
+// Trend + Coverage (for movie realism)
+function updateTrendsAndCoverage() {
+    const trendOut = document.getElementById("trendOutput");
+    const covOut = document.getElementById("coverageOutput");
+
+    if (spins.length < 50) {
+        trendOut.innerHTML = "No stable trend detected yet.";
+        covOut.innerHTML = "Insufficient data for coverage map.";
+        return;
+    }
+
+    // Sector counts
+    let v = 0, t = 0, o = 0;
+    for (let n of spins) {
+        if (voisins.includes(n)) v++;
+        else if (tiers.includes(n)) t++;
+        else if (orphelins.includes(n)) o++;
+    }
+
+    const total = v + t + o;
+    const vPct = (v / total) * 100;
+    const tPct = (t / total) * 100;
+    const oPct = (o / total) * 100;
+
+    // Simple sector trend detection
+    let sectorTrend = "";
+    if (vPct > tPct + 8 && vPct > oPct + 8) {
+        sectorTrend = "Elevated activity in Voisins du Zero sector.";
+    } else if (tPct > vPct + 8 && tPct > oPct + 8) {
+        sectorTrend = "Elevated activity in Tiers du Cylindre sector.";
+    } else if (oPct > vPct + 8 && oPct > tPct + 8) {
+        sectorTrend = "Elevated activity in Orphelins sector.";
+    } else {
+        sectorTrend = "No dominant sector trend detected.";
+    }
+
+    // Local cluster using prediction scores
+    let counts = Array(37).fill(0);
+    for (let n of spins) counts[n]++;
+
+    let scores = Array(37).fill(0);
+    for (let i = 0; i < 37; i++) {
+        scores[i] = counts[i];
+        if (voisins.includes(i)) scores[i] += 0.4;
+        if (tiers.includes(i)) scores[i] += 0.3;
+        if (orphelins.includes(i)) scores[i] += 0.2;
+    }
+
+    let ranked = [...scores]
+        .map((v, i) => ({ num: i, score: v }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+    const clusterNums = ranked.map(r => r.num);
+
+    trendOut.innerHTML =
+        `Trend Detected:<br>
+         ${sectorTrend}<br><br>
+         Local activity cluster around: ${clusterNums.join(", ")}`;
+
+    // Coverage map: show sector numbers + cluster
+    let activeSectorName = "";
+    let activeSectorNums = [];
+
+    if (sectorTrend.includes("Voisins")) {
+        activeSectorName = "Voisins du Zero";
+        activeSectorNums = voisins;
+    } else if (sectorTrend.includes("Tiers")) {
+        activeSectorName = "Tiers du Cylindre";
+        activeSectorNums = tiers;
+    } else if (sectorTrend.includes("Orphelins")) {
+        activeSectorName = "Orphelins";
+        activeSectorNums = orphelins;
+    }
+
+    if (activeSectorName === "") {
+        covOut.innerHTML =
+            "No clear sector dominance. Coverage map will appear when a sector trend emerges.";
+    } else {
+        covOut.innerHTML =
+            `Active Sector: ${activeSectorName}<br>
+             Sector Numbers: ${activeSectorNums.join(", ")}<br><br>
+             Local Cluster: ${clusterNums.join(", ")}`;
+    }
 }
