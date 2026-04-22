@@ -3,7 +3,7 @@ body {
     color: #fff;
     font-family: Arial, sans-serif;
     padding: 20px;
-    font-size: 300%; /* 3× bigger */
+    font-size: 300%;
 }
 
 h1, h2 {
@@ -11,7 +11,8 @@ h1, h2 {
 }
 
 #spin-history-panel,
-#sector-stats-panel,
+#sector-heatmap-panel,
+#prediction-panel,
 #bias-stats-panel {
     margin-top: 20px;
     padding: 15px;
@@ -36,4 +37,19 @@ button {
     padding: 20px 40px;
     font-size: 150%;
     cursor: pointer;
+    margin-right: 10px;
+}
+
+.hot {
+    color: #ff4444;
+    font-weight: bold;
+}
+
+.cold {
+    color: #44aaff;
+    font-weight: bold;
+}
+
+.neutral {
+    color: #aaa;
 }
