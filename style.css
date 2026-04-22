@@ -33,11 +33,17 @@ input {
     font-size: 150%;
 }
 
-button {
-    padding: 20px 40px;
-    font-size: 150%;
+/* Smaller Add + Undo buttons */
+#buttonRow {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#buttonRow button {
+    padding: 15px 30px;   /* smaller buttons */
+    font-size: 120%;      /* slightly smaller text */
     cursor: pointer;
-    margin-right: 10px;
 }
 
 .hot {
