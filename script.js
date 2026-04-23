@@ -42,17 +42,20 @@ function solveMinPucks(rows, targetList) {
         }
     }
 
+    // horizontal
     for (let r = 0; r < 3; r++) {
         for (let c = 0; c < rows[r].length - 1; c++) {
             makePlacement([rows[r][c], rows[r][c+1]], "H", [r,c]);
         }
     }
 
+    // vertical
     for (let c = 0; c < rows[0].length; c++) {
         makePlacement([rows[0][c], rows[1][c]], "V", [0,c]);
         makePlacement([rows[1][c], rows[2][c]], "V", [1,c]);
     }
 
+    // squares
     for (let c = 0; c < rows[0].length - 1; c++) {
         makePlacement([
             rows[0][c], rows[0][c+1],
@@ -108,9 +111,8 @@ function solveMinPucks(rows, targetList) {
     };
 }
 
-// ---------------- CORE FUNCTIONS ----------------
+// ---------------- CORE ----------------
 
-// Add spin
 function addSpin() {
     const input = document.getElementById("spinInput");
     const num = parseInt(input.value);
@@ -124,13 +126,11 @@ function addSpin() {
     input.value = "";
 
     setTimeout(() => input.focus(), 0);
-
     updateAll();
 }
 
-// Generate spins (FIXED)
 function generateSpins() {
-    spins.length = 0; // FIX: proper reset
+    spins.length = 0;
 
     for (let i = 0; i < 1000; i++) {
         spins.push(Math.floor(Math.random() * 37));
@@ -139,20 +139,19 @@ function generateSpins() {
     updateAll();
 }
 
-// Clear
 function clearAll() {
     spins.length = 0;
     updateAll();
 }
 
-// Undo
 function undoSpin() {
     if (spins.length === 0) return;
     spins.pop();
     updateAll();
 }
 
-// Update loop
+// ---------------- UPDATE ----------------
+
 function updateAll() {
     updateHistory();
     updateSpinCount();
@@ -244,7 +243,7 @@ function updatePredictions() {
         `Top: ${ranked.map(r=>r.num).join(", ")}`;
 }
 
-// ---------------- COVERAGE ----------------
+// ---------------- COVERAGE (ALL SPINS FIX) ----------------
 
 function updateTrendsAndCoverage() {
     const trendOut = document.getElementById("trendOutput");
@@ -253,7 +252,8 @@ function updateTrendsAndCoverage() {
     trendOut.innerHTML =
         spins.length < 50 ? "No stable trend yet" : "Tracking trends...";
 
-    const targets = spins.slice(-17);
+    // ✅ USING ALL SPINS (no slice anymore)
+    const targets = spins;
 
     if (targets.length === 0) {
         covOut.innerHTML = "Enter spins to see coverage";
@@ -268,7 +268,7 @@ function updateTrendsAndCoverage() {
     }
 
     covOut.innerHTML =
-        `<b>Optimal Coverage (last ${targets.length})</b><br>
+        `<b>Optimal Coverage (all spins: ${targets.length})</b><br>
          Minimum Pucks: ${result.minPucks}<br><br>` +
         result.placements.map((p,i)=>
             `${i+1}) ${p.type} @ [${p.pos}] → ${p.hits.join(", ")}`
