@@ -1,19 +1,20 @@
 let spins = [];
 
-// sectors
+// ---------------- SECTORS ----------------
 const voisins = [22,18,29,7,28,12,35,3,26,0,32,15,19,4,21,2,25];
 const tiers   = [27,13,36,11,30,8,23,10,5,24,16,33];
 const orphelins = [1,20,14,31,9,17,34,6];
 
-// grid
+// ---------------- GRID ----------------
 const boardRows = [
     [0,1,4,7,10,13,16,19,22,25,28,31,34],
     [0,2,5,8,11,14,17,20,23,26,29,32,35],
     [0,3,6,9,12,15,18,21,24,27,30,33,36]
 ];
 
-// ---------------- PUCK SOLVER (unchanged core) ----------------
+// ---------------- PUCK SOLVER ----------------
 function solveMinPucks(rows, targetList) {
+
     const uniqueTargets = [...new Set(targetList)];
     const map = new Map();
     uniqueTargets.forEach((n,i)=>map.set(n,i));
@@ -53,11 +54,13 @@ function solveMinPucks(rows, targetList) {
 
     function dfs(mask,i,used,path){
         if(used>=best) return;
+
         if(mask===FULL){
             best=used;
             bestSol=[...path];
             return;
         }
+
         if(i>=placements.length) return;
 
         path.push(placements[i]);
@@ -72,20 +75,21 @@ function solveMinPucks(rows, targetList) {
     return {minPucks: best===Infinity?"N/A":best, placements: bestSol};
 }
 
-// ---------------- CORE ----------------
+// ---------------- CORE FUNCTIONS ----------------
 
 function addSpin(){
-    const i=document.getElementById("spinInput");
-    const n=parseInt(i.value);
+    const input=document.getElementById("spinInput");
+    const n=parseInt(input.value);
 
     if(isNaN(n)||n<0||n>36){
-        i.value="";
+        input.value="";
         return;
     }
 
     spins.push(n);
-    i.value="";
-    setTimeout(()=>i.focus(),0);
+    input.value="";
+    setTimeout(()=>input.focus(),0);
+
     updateAll();
 }
 
@@ -120,41 +124,47 @@ function updateAll(){
 // ---------------- UI ----------------
 
 function updateSpinCount(){
-    document.getElementById("spinCount").textContent=`(${spins.length} spins)`;
+    document.getElementById("spinCount").textContent =
+        `(${spins.length} spins)`;
 }
 
 function updateHistory(){
-    document.getElementById("historyList").innerHTML=spins.slice(-15).join(", ");
+    document.getElementById("historyList").innerHTML =
+        spins.slice(-15).join(", ");
 }
 
 function updateHeatmap(){
     let v=0,t=0,o=0;
+
     spins.forEach(n=>{
         if(voisins.includes(n))v++;
         else if(tiers.includes(n))t++;
         else o++;
     });
 
-    document.getElementById("heatmapOutput").innerHTML=
-        `Voisins:${v}<br>Tiers:${t}<br>Orphelins:${o}`;
+    document.getElementById("heatmapOutput").innerHTML =
+        `Voisins: ${v}<br>Tiers: ${t}<br>Orphelins: ${o}`;
 }
 
 function updatePredictions(){
     let counts=Array(37).fill(0);
+
     spins.forEach(n=>counts[n]++);
 
-    let top=counts.map((v,i)=>({i,v}))
+    let top = counts
+        .map((v,i)=>({i,v}))
         .sort((a,b)=>b.v-a.v)
         .slice(0,3)
         .map(x=>x.i);
 
-    document.getElementById("predictionOutput").innerHTML=
+    document.getElementById("predictionOutput").innerHTML =
         `Top: ${top.join(", ")}`;
 }
 
-// ---------------- COVERAGE (ALL SPINS SAFE) ----------------
+// ---------------- COVERAGE ----------------
 
 function updateCoverage(){
+
     const out=document.getElementById("coverageOutput");
 
     if(spins.length===0){
@@ -164,15 +174,18 @@ function updateCoverage(){
 
     const result=solveMinPucks(boardRows,spins);
 
-    if(!result.placements.length){
-        out.innerHTML="No coverage solution";
-        return;
-    }
-
-    out.innerHTML=
+    out.innerHTML =
         `<b>Optimal Coverage (all spins: ${spins.length})</b><br>
-        Min Pucks: ${result.minPucks}<br><br>`+
+        Min Pucks: ${result.minPucks}<br><br>` +
         result.placements.map((p,i)=>
             `${i+1}) ${p.type} [${p.pos}] → ${p.hits.join(", ")}`
         ).join("<br>");
 }
+
+// ---------------- FIX FOR BUTTONS ----------------
+// THIS IS THE CRITICAL FIX THAT WAS MISSING
+
+window.generateSpins = generateSpins;
+window.clearAll = clearAll;
+window.addSpin = addSpin;
+window.undoSpin = undoSpin;
