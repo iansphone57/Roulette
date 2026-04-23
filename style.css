@@ -10,6 +10,19 @@ h1, h2 {
     color: #0f0;
 }
 
+/* Top buttons */
+#topButtons {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+#topButtons button {
+    padding: 15px 30px;
+    font-size: 120%;
+    cursor: pointer;
+}
+
 #spin-history-panel,
 #sector-heatmap-panel,
 #prediction-panel,
@@ -26,20 +39,22 @@ h1, h2 {
 /* Input + buttons on one line */
 #entryRow {
     display: flex;
-    gap: 10px;
+    gap: 20px;
     align-items: center;
 }
 
+/* Smaller input box (only for 2 digits) */
 #entryRow input {
-    flex: 1;
-    padding: 15px;
+    width: 120px;
+    padding: 10px;
     font-size: 120%;
+    text-align: center;
 }
 
-/* Smaller Add + Undo buttons */
+/* Bigger Add + Undo buttons */
 #entryRow button {
-    padding: 10px 20px;
-    font-size: 100%;
+    padding: 18px 35px;
+    font-size: 130%;
     cursor: pointer;
 }
 
