@@ -1,3 +1,5 @@
+console.log("SCRIPT LOADED");
+
 let spins = [];
 
 // ---------------- SECTORS ----------------
