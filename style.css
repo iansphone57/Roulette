@@ -23,7 +23,27 @@ h1, h2 {
     border-radius: 8px;
 }
 
-/* One-line, scrollable history */
+/* Input + buttons on one line */
+#entryRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#entryRow input {
+    flex: 1;
+    padding: 15px;
+    font-size: 120%;
+}
+
+/* Smaller Add + Undo buttons */
+#entryRow button {
+    padding: 10px 20px;
+    font-size: 100%;
+    cursor: pointer;
+}
+
+/* One-line scrollable history */
 #historyList {
     margin-top: 10px;
     font-size: 1em;
@@ -38,30 +58,6 @@ h1, h2 {
     margin-top: 10px;
     font-size: 0.8em;
     color: #ccc;
-}
-
-input {
-    padding: 20px;
-    font-size: 150%;
-}
-
-/* Button row */
-#buttonRow {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-#buttonRow button {
-    padding: 10px 20px;   /* smaller buttons */
-    font-size: 100%;      /* smaller text */
-}
-
-
-#buttonRow button {
-    padding: 15px 30px;   /* smaller buttons */
-    font-size: 120%;
-    cursor: pointer;
 }
 
 .hot {
