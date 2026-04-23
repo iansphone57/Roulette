@@ -1,6 +1,7 @@
 console.log("SCRIPT LOADED");
 
 let spins = [];
+let useExactSolver = false; // toggle mode
 
 // ---------------- SECTORS ----------------
 const voisins = [22,18,29,7,28,12,35,3,26,0,32,15,19,4,21,2,25];
@@ -14,7 +15,71 @@ const boardRows = [
     [0,3,6,9,12,15,18,21,24,27,30,33,36]
 ];
 
-// ---------------- PUCK SOLVER ----------------
+// ---------------- FAST SOLVER (GREEDY) ----------------
+function solveMinPucksFast(rows, targetList){
+
+    const targets = [...new Set(targetList)];
+    let uncovered = new Set(targets);
+
+    let placements = [];
+
+    function add(nums, type, pos){
+        placements.push({nums, type, pos});
+    }
+
+    // Generate placements
+    for(let r=0;r<3;r++){
+        for(let c=0;c<rows[r].length-1;c++){
+            add([rows[r][c],rows[r][c+1]], "H", [r,c]);
+        }
+    }
+
+    for(let c=0;c<rows[0].length;c++){
+        add([rows[0][c],rows[1][c]], "V", [0,c]);
+        add([rows[1][c],rows[2][c]], "V", [1,c]);
+    }
+
+    let solution = [];
+
+    while(uncovered.size > 0){
+
+        let best = null;
+        let bestHits = [];
+
+        for(let p of placements){
+            const hits = p.nums.filter(n => uncovered.has(n));
+            if(hits.length > bestHits.length){
+                best = p;
+                bestHits = hits;
+            }
+        }
+
+        if(!best) break;
+
+        solution.push({
+            ...best,
+            hits: bestHits
+        });
+
+        bestHits.forEach(n => uncovered.delete(n));
+    }
+
+    return {
+        minPucks: solution.length,
+        placements: solution
+    };
+}
+
+// ---------------- EXACT SOLVER (LIMITED) ----------------
+function solveMinPucksExactLimited(rows, targetList){
+
+    const MAX = 12;
+    const limited = targetList.slice(-MAX);
+
+    return solveMinPucks(rows, limited);
+}
+
+// ---------------- ORIGINAL EXACT SOLVER ----------------
 function solveMinPucks(rows, targetList) {
 
     const uniqueTargets = [...new Set(targetList)];
@@ -77,7 +142,7 @@ function solveMinPucks(rows, targetList) {
     return {minPucks: best===Infinity?"N/A":best, placements: bestSol};
 }
 
-// ---------------- CORE FUNCTIONS ----------------
+// ---------------- CORE ----------------
 
 function addSpin(){
     const input=document.getElementById("spinInput");
@@ -115,12 +180,16 @@ function undoSpin(){
 
 // ---------------- UPDATE ----------------
 
+let coverageTimeout;
+
 function updateAll(){
     updateHistory();
     updateSpinCount();
     updateHeatmap();
     updatePredictions();
-    updateCoverage();
+
+    clearTimeout(coverageTimeout);
+    coverageTimeout = setTimeout(updateCoverage, 100);
 }
 
 // ---------------- UI ----------------
@@ -174,20 +243,34 @@ function updateCoverage(){
         return;
     }
 
-    const result=solveMinPucks(boardRows,spins);
+    let result;
 
-    out.innerHTML =
-        `<b>Optimal Coverage (all spins: ${spins.length})</b><br>
-        Min Pucks: ${result.minPucks}<br><br>` +
+    if(useExactSolver){
+        result = solveMinPucksExactLimited(boardRows, spins);
+        out.innerHTML = `<b>Exact Mode (last 12 spins)</b><br>`;
+    } else {
+        result = solveMinPucksFast(boardRows, spins);
+        out.innerHTML = `<b>Fast Mode (all spins)</b><br>`;
+    }
+
+    out.innerHTML +=
+        `Min Pucks: ${result.minPucks}<br><br>` +
         result.placements.map((p,i)=>
             `${i+1}) ${p.type} [${p.pos}] → ${p.hits.join(", ")}`
         ).join("<br>");
 }
 
-// ---------------- FIX FOR BUTTONS ----------------
-// THIS IS THE CRITICAL FIX THAT WAS MISSING
+// ---------------- TOGGLE ----------------
+
+function toggleSolver(){
+    useExactSolver = !useExactSolver;
+    updateAll();
+}
+
+// ---------------- BUTTON FIX ----------------
 
 window.generateSpins = generateSpins;
 window.clearAll = clearAll;
 window.addSpin = addSpin;
 window.undoSpin = undoSpin;
+window.toggleSolver = toggleSolver;
