@@ -183,83 +183,57 @@ function updateTrendsAndCoverage() {
     const trendOut = document.getElementById("trendOutput");
     const covOut = document.getElementById("coverageOutput");
 
+    // ---- TREND (unchanged logic, just no early return) ----
     if (spins.length < 50) {
         trendOut.innerHTML = "No stable trend detected yet.";
-        covOut.innerHTML = "Insufficient data for coverage map.";
+    } else {
+
+        let v = 0, t = 0, o = 0;
+        for (let n of spins) {
+            if (voisins.includes(n)) v++;
+            else if (tiers.includes(n)) t++;
+            else if (orphelins.includes(n)) o++;
+        }
+
+        const total = v + t + o;
+        const vPct = (v / total) * 100;
+        const tPct = (t / total) * 100;
+        const oPct = (o / total) * 100;
+
+        let sectorTrend = "";
+        if (vPct > tPct + 8 && vPct > oPct + 8) {
+            sectorTrend = "Elevated activity in Voisins du Zero sector.";
+        } else if (tPct > vPct + 8 && tPct > oPct + 8) {
+            sectorTrend = "Elevated activity in Tiers du Cylindre sector.";
+        } else if (oPct > vPct + 8 && oPct > tPct + 8) {
+            sectorTrend = "Elevated activity in Orphelins sector.";
+        } else {
+            sectorTrend = "No dominant sector trend detected.";
+        }
+
+        trendOut.innerHTML = sectorTrend;
+    }
+
+    // ---- 🔥 PUCK SOLVER (ALWAYS RUNS) ----
+
+    const targets = spins.slice(-17);
+
+    if (targets.length === 0) {
+        covOut.innerHTML = "Enter spins to see coverage.";
         return;
     }
 
-    // Sector counts
-    let v = 0, t = 0, o = 0;
-    for (let n of spins) {
-        if (voisins.includes(n)) v++;
-        else if (tiers.includes(n)) t++;
-        else if (orphelins.includes(n)) o++;
+    const result = solveMinPucks(boardRows, targets);
+
+    if (!result || result.placements.length === 0) {
+        covOut.innerHTML = "No valid coverage found.";
+        return;
     }
 
-    const total = v + t + o;
-    const vPct = (v / total) * 100;
-    const tPct = (t / total) * 100;
-    const oPct = (o / total) * 100;
-
-    // Simple sector trend detection
-    let sectorTrend = "";
-    if (vPct > tPct + 8 && vPct > oPct + 8) {
-        sectorTrend = "Elevated activity in Voisins du Zero sector.";
-    } else if (tPct > vPct + 8 && tPct > oPct + 8) {
-        sectorTrend = "Elevated activity in Tiers du Cylindre sector.";
-    } else if (oPct > vPct + 8 && oPct > tPct + 8) {
-        sectorTrend = "Elevated activity in Orphelins sector.";
-    } else {
-        sectorTrend = "No dominant sector trend detected.";
-    }
-
-    // Local cluster using prediction scores
-    let counts = Array(37).fill(0);
-    for (let n of spins) counts[n]++;
-
-    let scores = Array(37).fill(0);
-    for (let i = 0; i < 37; i++) {
-        scores[i] = counts[i];
-        if (voisins.includes(i)) scores[i] += 0.4;
-        if (tiers.includes(i)) scores[i] += 0.3;
-        if (orphelins.includes(i)) scores[i] += 0.2;
-    }
-
-    let ranked = [...scores]
-        .map((v, i) => ({ num: i, score: v }))
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 3);
-
-    const clusterNums = ranked.map(r => r.num);
-
-    trendOut.innerHTML =
-        `Trend Detected:<br>
-         ${sectorTrend}<br><br>
-         Local activity cluster around: ${clusterNums.join(", ")}`;
-
-    // Coverage map: show sector numbers + cluster
-    let activeSectorName = "";
-    let activeSectorNums = [];
-
-    if (sectorTrend.includes("Voisins")) {
-        activeSectorName = "Voisins du Zero";
-        activeSectorNums = voisins;
-    } else if (sectorTrend.includes("Tiers")) {
-        activeSectorName = "Tiers du Cylindre";
-        activeSectorNums = tiers;
-    } else if (sectorTrend.includes("Orphelins")) {
-        activeSectorName = "Orphelins";
-        activeSectorNums = orphelins;
-    }
-
-    if (activeSectorName === "") {
-        covOut.innerHTML =
-            "No clear sector dominance. Coverage map will appear when a sector trend emerges.";
-    } else {
-        covOut.innerHTML =
-            `Active Sector: ${activeSectorName}<br>
-             Sector Numbers: ${activeSectorNums.join(", ")}<br><br>
-             Local Cluster: ${clusterNums.join(", ")}`;
-    }
+    covOut.innerHTML =
+        `<b>Optimal Coverage (last ${targets.length} spins)</b><br>
+         Minimum Pucks: ${result.minPucks}<br><br>` +
+        result.placements.map((p,i)=>
+            `${i+1}) ${p.type} @ [${p.pos}] → ${p.hits.join(", ")}`
+        ).join("<br>");
 }
