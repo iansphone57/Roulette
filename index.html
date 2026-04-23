@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Roulette V1.06</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1">
 </head>
 
 <body>
@@ -19,39 +19,31 @@
     <div id="spin-history-panel">
         <h2>Spin Entry <span id="spinCount">(0 spins)</span></h2>
 
-        <!-- Input + Add + Undo on one line -->
         <div id="entryRow">
-            <input id="spinInput" type="number" min="0" max="36" placeholder="#" maxlength="2">
+            <input id="spinInput" type="number" min="0" max="36" placeholder="#">
             <button onclick="addSpin()">Add</button>
-            <button onclick="undoSpin()" id="undoBtn">Undo</button>
+            <button onclick="undoSpin()">Undo</button>
         </div>
 
-        <!-- One-line scrollable history -->
         <div id="historyList"></div>
-
-        <!-- Sample strength indicator -->
         <div id="sampleStrength"></div>
     </div>
 
-    <!-- Sector Heatmap -->
     <div id="sector-heatmap-panel">
         <h2>Sector Heatmap</h2>
         <div id="heatmapOutput"></div>
     </div>
 
-    <!-- Prediction Engine -->
     <div id="prediction-panel">
         <h2>Predictions</h2>
         <div id="predictionOutput"></div>
     </div>
 
-    <!-- Bias Stats -->
     <div id="bias-stats-panel">
         <h2>Bias Detection</h2>
         <div id="biasOutput"></div>
     </div>
 
-    <!-- Trend + Coverage -->
     <div id="trend-panel">
         <h2>Trend Detected</h2>
         <div id="trendOutput"></div>
@@ -62,6 +54,8 @@
         <div id="coverageOutput"></div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- IMPORTANT: cache-busted -->
+    <script src="script.js?v=1"></script>
+
 </body>
 </html>
