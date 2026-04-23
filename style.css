@@ -1,5 +1,47 @@
+body {
+    background: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
 
-/* FIX spacing on input row */
+    /* FIX: scalable readable base */
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+h1, h2 {
+    color: #0f0;
+}
+
+/* Top buttons */
+#topButtons {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+#topButtons button {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* Panels */
+#spin-history-panel,
+#sector-heatmap-panel,
+#prediction-panel,
+#bias-stats-panel,
+#trend-panel,
+#coverage-panel {
+    margin-top: 20px;
+    padding: 15px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+}
+
+/* Entry row */
 #entryRow {
     display: flex;
     gap: 40px;
@@ -7,18 +49,84 @@
     flex-wrap: wrap;
 }
 
-/* better spacing between elements */
-#entryRow input,
-#entryRow button {
-    margin-right: 10px;
+/* input */
+#entryRow input {
+    width: 140px;
+    padding: 10px;
+    font-size: 1.4rem;
+    text-align: center;
 }
 
-/* prevent cramped feel */
+/* buttons */
 #entryRow button {
     padding: 18px 35px;
+    font-size: 1.4rem;
+    cursor: pointer;
 }
 
-/* smoother mobile behaviour */
-#spinInput {
-    font-size: 120%;
+/* history scroll */
+#historyList {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #0f0;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+/* sample text */
+#sampleStrength {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* heatmap colors */
+.hot {
+    color: #ff4444;
+    font-weight: bold;
+}
+
+.cold {
+    color: #44aaff;
+    font-weight: bold;
+}
+
+.neutral {
+    color: #aaa;
+}
+
+/* ---------------- MOBILE OPTIMISATION ---------------- */
+@media (max-width: 768px) {
+    body {
+        font-size: 1.6rem;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    #entryRow input {
+        font-size: 1.6rem;
+        width: 160px;
+    }
+
+    #entryRow button {
+        font-size: 1.6rem;
+    }
+
+    #topButtons button {
+        font-size: 1.4rem;
+    }
+
+    #coverageOutput,
+    #trendOutput,
+    #biasOutput,
+    #predictionOutput,
+    #heatmapOutput {
+        font-size: 1.3rem;
+    }
 }
