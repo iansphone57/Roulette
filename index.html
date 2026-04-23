@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Roulette V1.04</title>
+    <title>Roulette V1.06</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <h1>Roulette V1.04</h1>
+    <h1>Roulette V1.06</h1>
+
+    <!-- Generate + Clear buttons -->
+    <div id="topButtons">
+        <button onclick="generateSpins()">Generate 1000</button>
+        <button onclick="clearAll()">Clear</button>
+    </div>
 
     <!-- Spin Entry Panel -->
     <div id="spin-history-panel">
-        <h2>Spin Entry</h2>
+        <h2>Spin Entry <span id="spinCount">(0 spins)</span></h2>
 
         <!-- Input + Add + Undo on one line -->
         <div id="entryRow">
-            <input id="spinInput" type="number" min="0" max="36" placeholder="Enter number">
+            <input id="spinInput" type="number" min="0" max="36" placeholder="#" maxlength="2">
             <button onclick="addSpin()">Add</button>
             <button onclick="undoSpin()" id="undoBtn">Undo</button>
         </div>
