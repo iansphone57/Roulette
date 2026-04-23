@@ -3,8 +3,6 @@ body {
     color: #fff;
     font-family: Arial, sans-serif;
     padding: 20px;
-
-    /* FIX: scalable readable base */
     font-size: 1rem;
     line-height: 1.4;
 }
@@ -13,7 +11,7 @@ h1, h2 {
     color: #0f0;
 }
 
-/* Top buttons */
+/* buttons */
 #topButtons {
     display: flex;
     gap: 20px;
@@ -24,10 +22,9 @@ h1, h2 {
 #topButtons button {
     padding: 15px 30px;
     font-size: 1.2rem;
-    cursor: pointer;
 }
 
-/* Panels */
+/* panels */
 #spin-history-panel,
 #sector-heatmap-panel,
 #prediction-panel,
@@ -41,15 +38,14 @@ h1, h2 {
     border-radius: 8px;
 }
 
-/* Entry row */
+/* input row */
 #entryRow {
     display: flex;
-    gap: 40px;
-    align-items: center;
+    gap: 30px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
-/* input */
 #entryRow input {
     width: 140px;
     padding: 10px;
@@ -57,45 +53,27 @@ h1, h2 {
     text-align: center;
 }
 
-/* buttons */
 #entryRow button {
-    padding: 18px 35px;
+    padding: 15px 30px;
     font-size: 1.4rem;
-    cursor: pointer;
 }
 
-/* history scroll */
+/* history */
 #historyList {
     margin-top: 10px;
-    font-size: 1rem;
     color: #0f0;
     white-space: nowrap;
     overflow-x: auto;
 }
 
-/* sample text */
+/* text */
 #sampleStrength {
     margin-top: 10px;
     font-size: 0.9rem;
     color: #ccc;
 }
 
-/* heatmap colors */
-.hot {
-    color: #ff4444;
-    font-weight: bold;
-}
-
-.cold {
-    color: #44aaff;
-    font-weight: bold;
-}
-
-.neutral {
-    color: #aaa;
-}
-
-/* ---------------- MOBILE OPTIMISATION ---------------- */
+/* mobile scaling */
 @media (max-width: 768px) {
     body {
         font-size: 1.6rem;
@@ -109,17 +87,9 @@ h1, h2 {
         font-size: 1.8rem;
     }
 
-    #entryRow input {
-        font-size: 1.6rem;
-        width: 160px;
-    }
-
+    #entryRow input,
     #entryRow button {
         font-size: 1.6rem;
-    }
-
-    #topButtons button {
-        font-size: 1.4rem;
     }
 
     #coverageOutput,
@@ -130,3 +100,8 @@ h1, h2 {
         font-size: 1.3rem;
     }
 }
+
+/* heat colors */
+.hot { color: #ff4444; font-weight: bold; }
+.cold { color: #44aaff; font-weight: bold; }
+.neutral { color: #aaa; }
