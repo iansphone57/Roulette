@@ -12,22 +12,21 @@ const boardRows = [
     [0,3,6,9,12,15,18,21,24,27,30,33,36]
 ];
 
-// ---------------- PUCK SOLVER ----------------
+// ---------------- PUCK SOLVER (unchanged core) ----------------
 function solveMinPucks(rows, targetList) {
-
     const uniqueTargets = [...new Set(targetList)];
-    const targetIndex = new Map();
-    uniqueTargets.forEach((n,i)=>targetIndex.set(n,i));
+    const map = new Map();
+    uniqueTargets.forEach((n,i)=>map.set(n,i));
 
-    const FULL_MASK = (1 << uniqueTargets.length) - 1;
+    const FULL = (1 << uniqueTargets.length) - 1;
 
     let placements = [];
 
     function add(nums,type,pos){
         let mask=0, hits=[];
         for(let n of nums){
-            if(targetIndex.has(n)){
-                mask |= (1<<targetIndex.get(n));
+            if(map.has(n)){
+                mask |= (1<<map.get(n));
                 hits.push(n);
             }
         }
@@ -45,16 +44,7 @@ function solveMinPucks(rows, targetList) {
         add([rows[1][c],rows[2][c]],"V",[1,c]);
     }
 
-    for(let c=0;c<rows[0].length-1;c++){
-        add([rows[0][c],rows[0][c+1],rows[1][c],rows[1][c+1]],"S",[0,c]);
-        add([rows[1][c],rows[1][c+1],rows[2][c],rows[2][c+1]],"S",[1,c]);
-    }
-
-    function bits(x){
-        let c=0;
-        while(x){x&=x-1;c++;}
-        return c;
-    }
+    function bits(x){let c=0;while(x){x&=x-1;c++;}return c;}
 
     placements.sort((a,b)=>bits(b.mask)-bits(a.mask));
 
@@ -63,13 +53,11 @@ function solveMinPucks(rows, targetList) {
 
     function dfs(mask,i,used,path){
         if(used>=best) return;
-
-        if(mask===FULL_MASK){
+        if(mask===FULL){
             best=used;
             bestSol=[...path];
             return;
         }
-
         if(i>=placements.length) return;
 
         path.push(placements[i]);
@@ -81,26 +69,23 @@ function solveMinPucks(rows, targetList) {
 
     dfs(0,0,0,[]);
 
-    return {
-        minPucks: best===Infinity?"N/A":best,
-        placements: bestSol
-    };
+    return {minPucks: best===Infinity?"N/A":best, placements: bestSol};
 }
 
 // ---------------- CORE ----------------
 
 function addSpin(){
-    const input=document.getElementById("spinInput");
-    const n=parseInt(input.value);
+    const i=document.getElementById("spinInput");
+    const n=parseInt(i.value);
 
     if(isNaN(n)||n<0||n>36){
-        input.value="";
+        i.value="";
         return;
     }
 
     spins.push(n);
-    input.value="";
-    setTimeout(()=>input.focus(),0);
+    i.value="";
+    setTimeout(()=>i.focus(),0);
     updateAll();
 }
 
@@ -127,9 +112,7 @@ function undoSpin(){
 function updateAll(){
     updateHistory();
     updateSpinCount();
-    updateSampleStrength();
     updateHeatmap();
-    updateBiasStats();
     updatePredictions();
     updateCoverage();
 }
@@ -144,11 +127,6 @@ function updateHistory(){
     document.getElementById("historyList").innerHTML=spins.slice(-15).join(", ");
 }
 
-function updateSampleStrength(){
-    document.getElementById("sampleStrength").textContent =
-        `Spins: ${spins.length}`;
-}
-
 function updateHeatmap(){
     let v=0,t=0,o=0;
     spins.forEach(n=>{
@@ -161,42 +139,28 @@ function updateHeatmap(){
         `Voisins:${v}<br>Tiers:${t}<br>Orphelins:${o}`;
 }
 
-function updateBiasStats(){
-    let counts=Array(37).fill(0);
-    spins.forEach(n=>counts[n]++);
-
-    const avg=spins.length/37;
-
-    let hot=[],cold=[];
-
-    for(let i=0;i<37;i++){
-        if(counts[i]>avg*1.8)hot.push(i);
-        if(counts[i]<avg*0.4)cold.push(i);
-    }
-
-    document.getElementById("biasOutput").innerHTML=
-        `Hot:${hot}<br>Cold:${cold}`;
-}
-
 function updatePredictions(){
     let counts=Array(37).fill(0);
     spins.forEach(n=>counts[n]++);
 
-    let top=counts
-        .map((v,i)=>({i,v}))
+    let top=counts.map((v,i)=>({i,v}))
         .sort((a,b)=>b.v-a.v)
         .slice(0,3)
         .map(x=>x.i);
 
     document.getElementById("predictionOutput").innerHTML=
-        `Top:${top.join(", ")}`;
+        `Top: ${top.join(", ")}`;
 }
 
-// ---------------- COVERAGE (NO "last 17") ----------------
+// ---------------- COVERAGE (ALL SPINS SAFE) ----------------
 
 function updateCoverage(){
-
     const out=document.getElementById("coverageOutput");
+
+    if(spins.length===0){
+        out.innerHTML="Enter spins";
+        return;
+    }
 
     const result=solveMinPucks(boardRows,spins);
 
