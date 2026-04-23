@@ -42,20 +42,17 @@ function solveMinPucks(rows, targetList) {
         }
     }
 
-    // horizontal
     for (let r = 0; r < 3; r++) {
         for (let c = 0; c < rows[r].length - 1; c++) {
             makePlacement([rows[r][c], rows[r][c+1]], "H", [r,c]);
         }
     }
 
-    // vertical
     for (let c = 0; c < rows[0].length; c++) {
         makePlacement([rows[0][c], rows[1][c]], "V", [0,c]);
         makePlacement([rows[1][c], rows[2][c]], "V", [1,c]);
     }
 
-    // squares
     for (let c = 0; c < rows[0].length - 1; c++) {
         makePlacement([
             rows[0][c], rows[0][c+1],
@@ -106,47 +103,56 @@ function solveMinPucks(rows, targetList) {
     dfs(0, 0, 0, []);
 
     return {
-        minPucks: bestCount,
+        minPucks: bestCount === Infinity ? "N/A" : bestCount,
         placements: bestSolution
     };
 }
 
 // ---------------- CORE FUNCTIONS ----------------
 
-// Add a spin manually
+// Add spin
 function addSpin() {
     const input = document.getElementById("spinInput");
     const num = parseInt(input.value);
 
     if (isNaN(num) || num < 0 || num > 36) {
         input.value = "";
-        input.focus();
         return;
     }
 
     spins.push(num);
     input.value = "";
-    input.focus();
+
+    setTimeout(() => input.focus(), 0);
 
     updateAll();
 }
 
-// Generate random spins
+// Generate spins (FIXED)
 function generateSpins() {
-    spins = [];
+    spins.length = 0; // FIX: proper reset
+
     for (let i = 0; i < 1000; i++) {
         spins.push(Math.floor(Math.random() * 37));
     }
+
     updateAll();
 }
 
-// Clear all
+// Clear
 function clearAll() {
-    spins = [];
+    spins.length = 0;
     updateAll();
 }
 
-// Main updater
+// Undo
+function undoSpin() {
+    if (spins.length === 0) return;
+    spins.pop();
+    updateAll();
+}
+
+// Update loop
 function updateAll() {
     updateHistory();
     updateSpinCount();
@@ -175,7 +181,7 @@ function updateSampleStrength() {
 
     if (n < 30) msg += "Very early";
     else if (n < 100) msg += "Unstable";
-    else msg += "Usable data";
+    else msg += "Usable";
 
     document.getElementById("sampleStrength").textContent = msg;
 }
@@ -238,20 +244,15 @@ function updatePredictions() {
         `Top: ${ranked.map(r=>r.num).join(", ")}`;
 }
 
-// ---------------- COVERAGE + PUCKS ----------------
+// ---------------- COVERAGE ----------------
 
 function updateTrendsAndCoverage() {
     const trendOut = document.getElementById("trendOutput");
     const covOut = document.getElementById("coverageOutput");
 
-    // Trend (safe)
-    if (spins.length < 50) {
-        trendOut.innerHTML = "No stable trend yet";
-    } else {
-        trendOut.innerHTML = "Tracking trends...";
-    }
+    trendOut.innerHTML =
+        spins.length < 50 ? "No stable trend yet" : "Tracking trends...";
 
-    // Always run coverage
     const targets = spins.slice(-17);
 
     if (targets.length === 0) {
@@ -260,6 +261,11 @@ function updateTrendsAndCoverage() {
     }
 
     const result = solveMinPucks(boardRows, targets);
+
+    if (!result.placements || result.placements.length === 0) {
+        covOut.innerHTML = "No valid coverage found";
+        return;
+    }
 
     covOut.innerHTML =
         `<b>Optimal Coverage (last ${targets.length})</b><br>
